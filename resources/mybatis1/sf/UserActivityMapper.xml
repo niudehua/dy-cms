@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserActivityMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		SF_USERACTIVITY
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		WXUSERID,	
+		ACTIVITYID,	
+		COUNT,	
+		KMCOUNT,	
+		TIMES,	
+		SIGNTIME,	
+		RANKING,	
+		USERACTIVITY_ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{WXUSERID},	
+		#{ACTIVITYID},	
+		#{COUNT},	
+		#{KMCOUNT},	
+		#{TIMES},	
+		#{SIGNTIME},	
+		#{RANKING},	
+		#{USERACTIVITY_ID}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="Field"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			USERACTIVITY_ID = #{USERACTIVITY_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			COUNT = #{COUNT},
+			KMCOUNT = #{KMCOUNT},
+			TIMES = #{TIMES},
+		USERACTIVITY_ID = USERACTIVITY_ID
+		where 
+		USERACTIVITY_ID = #{USERACTIVITY_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			USERACTIVITY_ID = #{USERACTIVITY_ID}
+	</select>
+	<!-- 通过ID获取数据 -->
+	<select id="getRANKING" parameterType="pd" resultType="pd">
+		select 
+		 count(*) as COUNT
+		from 
+		<include refid="tableName"></include>
+		where 
+			COUNT &gt; #{COUNT}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		u.WXUSERID,	
+		u.ACTIVITYID,	
+		u.COUNT,	
+		u.KMCOUNT,	
+		u.TIMES,	
+		u.SIGNTIME,	
+		u.RANKING,	
+		u.USERACTIVITY_ID,
+		w.NAME,	
+		w.PHONE,	
+		w.WXNAME,
+		w.WXATT,
+		a.TITLE,	
+		a.BEGTIME,	
+		a.ENDTIME,	
+		a.UNIT	
+		from 
+		<include refid="tableName"></include> u,SF_ACTIVITY a,SF_WXUSER w
+		where 1=1
+		<if test="pd.TITLE!= null and pd.TITLE != ''"><!-- 关键词检索 -->
+			and a.TITLE=#{pd.TITLE} 
+		</if>
+		<if test="pd.NAME!= null and pd.NAME != ''"><!-- 关键词检索 -->
+			and w.NAME=#{pd.NAME}
+		</if>
+		order by RANKING
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		u.WXUSERID,	
+		u.ACTIVITYID,	
+		u.COUNT,	
+		u.KMCOUNT,	
+		u.TIMES,	
+		u.SIGNTIME,	
+		u.RANKING,	
+		u.USERACTIVITY_ID,
+		w.NAME,	
+		w.PHONE,	
+		w.WXNAME,
+		w.WXATT,
+		a.TITLE,	
+		a.BEGTIME,	
+		a.ENDTIME,	
+		a.UNIT	
+		from 
+		<include refid="tableName"></include> u
+		left join SF_ACTIVITY a on u.ACTIVITYID=a.ACTIVITY_ID
+		left join SF_WXUSER w on u.WXUSERID=w.WXUSER_ID
+		where 1=1
+		<if test="TITLE!= null and TITLE != ''"><!-- 关键词检索 -->
+			and a.TITLE=#{TITLE} 
+		</if>
+		<if test="NAME!= null and NAME != ''"><!-- 关键词检索 -->
+			and w.NAME=#{NAME}
+		</if>
+		<if test="ACTIVITYID!= null and ACTIVITYID != ''"><!-- 关键词检索 -->
+			and u.ACTIVITYID=#{ACTIVITYID} 
+		</if>
+		<if test="OPENID!= null and OPENID != ''"><!-- 关键词检索 -->
+			and w.OPENID=#{OPENID} 
+		</if>
+		order by u.COUNT desc
+		limit #{start},#{newsnumber}
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			USERACTIVITY_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!--  -->
+</mapper>
