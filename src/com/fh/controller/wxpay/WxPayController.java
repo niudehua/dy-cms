@@ -28,7 +28,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/pay")
-public class PayController {
+public class WxPayController {
 
     private PayService service = null;
 
@@ -36,7 +36,7 @@ public class PayController {
     public void init() {
         WxPayConfigStorage wxPayConfigStorage = new WxPayConfigStorage();
         wxPayConfigStorage.setMchId(WxPayConstants.MCH_ID);
-        wxPayConfigStorage.setAppid(WxPayConstants.APP_ID);
+        wxPayConfigStorage.setAppId(WxPayConstants.APP_ID);
         wxPayConfigStorage.setKeyPublic(WxPayConstants.KEY_PUBLIC);
         wxPayConfigStorage.setSecretKey(WxPayConstants.KEY_PRIVATE);
         wxPayConfigStorage.setNotifyUrl("异步回调地址");
